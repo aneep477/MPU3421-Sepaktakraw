@@ -331,7 +331,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
   <script>/* GitHub Pages → iframe HtmlService → google.script.run. Tiada proksi luar. */
 (function () {
   "use strict";
-  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx-DV6FxatJko1PY3AVKedGjTQiUjPHyecRw-CcLZgTbOTP33Tln82_yBgnNLb9B4NtZQ/exec";
+  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyqIBEP88lwlx0BfM_CX9HG82p_sOAj89bBuqTpq1ox1glhSYZ5DGDLBK4-PZZJ8E10Zg/exec";
   const APP_ORIGIN = "https://aneep477.github.io";
   const REQUEST_TIMEOUT = 90000;
   const CONNECT_TIMEOUT = 45000;
