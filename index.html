@@ -3,583 +3,668 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pentaksiran MPU3421 Sepak Takraw</title>
+  <title>Dashboard Pentaksiran MPU3421 Sepak Takraw</title>
 
-  <!-- FONTAWESOME & GOOGLE FONTS -->
+  <!-- FONTAWESOME, CHART.JS & GOOGLE FONTS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --bg: #e2e8f0;
-      --clay-bg: #f1f5f9;
-      --text: #0f172a;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
       --text-muted: #64748b;
-      --primary: #2563eb;
-      --accent: #10b981;
+      --primary: #16a34a; /* Green Tennis/Sport Theme */
+      --primary-soft: #dcfce7;
+      --accent: #2563eb;
       --warning: #f59e0b;
       --danger: #ef4444;
-
-      /* CLAYMORPHISM 3D SHADOWS */
-      --clay-shadow: 10px 10px 20px #cbd5e1, -10px -10px 20px #ffffff;
-      --clay-input-shadow: inset 3px 3px 6px #cbd5e1, inset -3px -3px 6px #ffffff;
-      --clay-btn-shadow: 5px 5px 10px #cbd5e1, -5px -5px 10px #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 16px; min-height: 100vh; }
 
-    .container { max-width: 800px; margin: 0 auto; }
+    .app-container { max-width: 1050px; margin: 0 auto; }
 
-    /* HEADER */
-    header {
-      background: var(--clay-bg);
+    /* DASHBOARD TOP HEADER */
+    .top-header {
+      background: var(--card-bg);
       border-radius: 20px;
-      padding: 16px;
-      text-align: center;
-      margin-bottom: 14px;
-      box-shadow: var(--clay-shadow);
-    }
-    header h1 { font-size: 1.25rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    header p { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
-
-    /* ROLE SELECTOR */
-    .role-card {
-      background: #e0e7ff;
-      border-radius: 18px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      box-shadow: var(--clay-shadow);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border: 1px solid var(--border);
     }
-    .role-card label { font-size: 0.85rem; font-weight: 800; color: #3730a3; display: flex; align-items: center; gap: 6px; }
-    .role-card select {
-      background: var(--clay-bg);
-      border: none;
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-weight: 800;
-      color: #3730a3;
-      box-shadow: var(--clay-input-shadow);
-      outline: none;
-    }
-
-    /* NAVIGATION TABS */
-    nav { display: flex; gap: 8px; margin-bottom: 14px; }
-    nav button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 16px;
-      border: none;
-      background: var(--clay-bg);
-      color: var(--text-muted);
-      font-weight: 700;
-      font-size: 0.8rem;
-      cursor: pointer;
-      box-shadow: var(--clay-btn-shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    nav button.active {
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon {
+      width: 44px; height: 44px;
       background: var(--primary);
-      color: #ffffff;
-      box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -2px 5px rgba(0,0,0,0.2);
+      color: white;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
     }
+    .brand h1 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+    .brand p { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
 
-    /* CARDS */
-    .card {
-      background: var(--clay-bg);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: var(--clay-shadow);
-    }
-    .hidden { display: none !important; }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 12px;
+    /* ROLE BAR */
+    .role-badge-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .form-group { margin-bottom: 12px; }
-    label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 0.8rem; color: var(--text-muted); }
-    select, input, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--clay-bg);
-      border: none;
-      border-radius: 14px;
-      color: var(--text);
-      font-size: 0.88rem;
-      font-weight: 700;
-      box-shadow: var(--clay-input-shadow);
-      outline: none;
-    }
-
-    /* REKA BENTUK SENARAI SEMAK CHECKBOX ITEM (MESRA TELEFON) */
-    .skill-block {
       background: #f8fafc;
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 14px;
-      box-shadow: inset 2px 2px 5px #cbd5e1, inset -2px -2px 5px #ffffff;
-    }
-    .skill-block h4 {
-      font-size: 0.9rem;
-      color: var(--primary);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .skill-score-badge {
-      background: var(--primary);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--clay-bg);
-      padding: 10px 12px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      box-shadow: var(--clay-btn-shadow);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.15s ease;
-    }
-    .check-item:active { transform: scale(0.98); }
-    .check-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--accent);
-      cursor: pointer;
-      box-shadow: none;
-    }
-    .check-item-text { flex: 1; font-size: 0.8rem; font-weight: 600; color: #334155; }
-    .check-item-score { font-size: 0.75rem; font-weight: 800; color: var(--accent); }
-
-    /* EDITABLE SCORE OVERRIDE BOX */
-    .score-override-box {
-      background: #e2e8f0;
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .score-override-box label { font-size: 0.78rem; margin-bottom: 0; color: #0f172a; }
-    .score-override-box input {
-      width: 90px;
-      text-align: center;
-      font-size: 1rem;
-      color: var(--primary);
-      background: #ffffff;
-    }
-
-    /* JUSTIFICATION CARD */
-    .justification-card {
-      background: #fef3c7;
+      padding: 6px 12px;
       border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 0.8rem;
-      color: #78350f;
-      font-weight: 600;
-      margin-top: 8px;
-      box-shadow: inset 2px 2px 4px #fde68a;
-      display: flex;
-      gap: 6px;
-      align-items: flex-start;
+      border: 1px solid var(--border);
+    }
+    .role-badge-bar label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+    .role-badge-bar select {
+      border: none;
+      background: transparent;
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
     }
 
-    .btn-submit {
-      width: 100%;
-      padding: 12px;
+    /* NAVIGATION TABS BAR */
+    nav.nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      background: var(--card-bg);
+      padding: 6px;
       border-radius: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    nav.nav-tabs button {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 12px;
       border: none;
-      background: var(--accent);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 0.9rem;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.82rem;
       cursor: pointer;
-      box-shadow: 4px 4px 10px #a7f3d0, -4px -4px 10px #ffffff;
-      margin-top: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    nav.nav-tabs button.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
     }
 
-    .alert { padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; margin-bottom: 12px; text-align: center; }
-    .alert-success { background: #d1fae5; color: #065f46; }
-    .alert-error { background: #fee2e2; color: #991b1b; }
+    /* DASHBOARD CARD CONTAINERS */
+    .dashboard-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .hidden { display: none !important; }
 
-    /* LAPORAN CETAKAN */
-    .report-sheet { background: #ffffff; color: #000; padding: 20px; border-radius: 10px; font-family: 'Times New Roman', serif; }
-    .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 10px; }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .card-header h3 {
+      font-size: 1rem; font-weight: 800; color: var(--text-main);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    label.field-label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.8rem; color: var(--text-muted); }
+    select.input-field, input.input-field, textarea.input-field {
+      width: 100%;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+    }
+    select.input-field:focus, input.input-field:focus { border-color: var(--primary); background: #ffffff; }
+
+    /* SKILL RUBRIC ITEM BLOCK */
+    .skill-block {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+    }
+    .skill-block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .skill-title { font-size: 0.9rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+    .score-badge {
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .criterion-card {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .criterion-desc { font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 8px; display: block; }
+
+    /* SEGMENTED BUTTONS (PILLS) */
+    .segmented-group { display: flex; gap: 6px; }
+    .seg-btn { flex: 1; position: relative; }
+    .seg-btn input[type="radio"] { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+    .seg-btn label {
+      display: block;
+      text-align: center;
+      padding: 8px 4px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      margin-bottom: 0;
+    }
+    .seg-btn input[value="cemerlang"]:checked + label { background: #22c55e; color: #ffffff; font-weight: 800; }
+    .seg-btn input[value="sederhana"]:checked + label { background: #f59e0b; color: #ffffff; font-weight: 800; }
+    .seg-btn input[value="lemah"]:checked + label { background: #ef4444; color: #ffffff; font-weight: 800; }
+
+    /* MANUAL OVERRIDE INPUT */
+    .score-override-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+    }
+    .score-override-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+    .score-override-row input {
+      width: 90px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    /* AUTO JUSTIFICATION CARD */
+    .auto-justification-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.8rem;
+      color: #b45309;
+      font-weight: 600;
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    }
+
+    /* PROFILE & RADAR CHART LAYOUT GRID */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      .profile-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .radar-container {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      position: relative;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .kpi-card {
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid var(--border);
+    }
+    .kpi-title { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-top: 2px; }
+
+    .alert { padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; margin-bottom: 12px; text-align: center; }
+    .alert-success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .alert-error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    /* LAPORAN CETAKAN SHEET */
+    .report-sheet { background: #ffffff; color: #000; padding: 25px; border-radius: 12px; font-family: 'Times New Roman', serif; }
+    .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
     .logo-img { max-height: 65px; margin-bottom: 4px; }
 
-    .report-table { width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 10px; font-size: 0.82rem; }
-    .report-table th, .report-table td { border: 1px solid #000; padding: 4px 6px; text-align: left; }
+    .report-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 12px; font-size: 0.82rem; }
+    .report-table th, .report-table td { border: 1px solid #000; padding: 5px 7px; text-align: left; }
     .report-table th { background: #f1f5f9; font-weight: bold; }
 
     @media print {
       body { background: white; padding: 0; }
-      header, .role-card, nav, .card-form, .btn-print, .uploader-card { display: none !important; }
-      .container { max-width: 100%; }
+      .top-header, nav.nav-tabs, .card-form, .btn-print, .uploader-box { display: none !important; }
+      .app-container { max-width: 100%; }
       .report-sheet { padding: 0; border-radius: 0; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1><i class="fa-solid fa-volleyball"></i> MPU3421 Sepak Takraw</h1>
-      <p>Borang Senarai Semak Perlakuan Amali (60%) & Simulasi (40%)</p>
-    </header>
+  <div class="app-container">
+    
+    <!-- HEADER UTAMA DASHBOARD -->
+    <div class="top-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-volleyball"></i></div>
+        <div>
+          <h1>MPU3421 Sepak Takraw</h1>
+          <p>Sistem Dashboard Pentaksiran Kemahiran (60% Amali / 40% Simulasi)</p>
+        </div>
+      </div>
 
-    <!-- PILIHAN PERANAN -->
-    <div class="role-card card-form">
-      <label for="evaluatorRole"><i class="fa-solid fa-user-gear"></i> Penilai Peranti Ini:</label>
-      <select id="evaluatorRole" onchange="updateRoleUI()">
-        <option value="P1">Penilai 1 (P1)</option>
-        <option value="P2">Penilai 2 (P2)</option>
-      </select>
+      <div class="role-badge-bar">
+        <i class="fa-solid fa-user-check" style="color: var(--primary);"></i>
+        <label>Peranan Penilai:</label>
+        <select id="evaluatorRole" onchange="updateRoleUI()">
+          <option value="P1">Penilai 1 (P1)</option>
+          <option value="P2">Penilai 2 (P2)</option>
+        </select>
+      </div>
     </div>
 
-    <nav class="card-form">
-      <button id="btn-tab-amali" class="active" onclick="switchTab('amali')"><i class="fa-solid fa-list-check"></i> 1. Amali (60%)</button>
-      <button id="btn-tab-simulasi" onclick="switchTab('simulasi')"><i class="fa-solid fa-chalkboard-user"></i> 2. Simulasi (40%)</button>
-      <button id="btn-tab-laporan" onclick="switchTab('laporan')"><i class="fa-solid fa-file-invoice"></i> 3. Laporan</button>
+    <!-- TABS NAVIGASI -->
+    <nav class="nav-tabs card-form">
+      <button id="btn-tab-amali" class="active" onclick="switchTab('amali')"><i class="fa-solid fa-list-check"></i> 1. Rubrik Amali (60%)</button>
+      <button id="btn-tab-simulasi" onclick="switchTab('simulasi')"><i class="fa-solid fa-chalkboard-user"></i> 2. Rubrik Simulasi (40%)</button>
+      <button id="btn-tab-dashboard" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> 3. Profil & Spider Radar</button>
     </nav>
 
     <div id="notification"></div>
 
-    <!-- MODUL 1: SENARAI SEMAK UJIAN AMALI -->
-    <div id="sec-amali" class="card card-form">
-      <div class="card-title">
-        <i class="fa-solid fa-clipboard-check" style="color: var(--accent);"></i>
-        Senarai Semak Perlakuan Amali (<span class="txtRoleDisplay">Penilai 1</span>)
+    <!-- TAB 1: SENARAI SEMAK RUBRIK AMALI KEMAHIRAN -->
+    <div id="sec-amali" class="dashboard-card card-form">
+      <div class="card-header">
+        <h3><i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i> Penilaian Ujian Amali (<span class="txtRoleDisplay">Penilai 1</span>)</h3>
       </div>
 
       <div class="form-group">
-        <label><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
-        <select id="selectPelajarAmali" required><option value="">-- Memuatkan... --</option></select>
+        <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
+        <select id="selectPelajarAmali" class="input-field" required><option value="">-- Memuatkan Pelajar... --</option></select>
       </div>
 
       <form id="formAmali" onsubmit="handleAmaliSubmit(event)">
         
-        <!-- 1. SERVIS (20.0M) -->
+        <!-- 1. SERVIS (20M) -->
         <div class="skill-block">
-          <h4>
-            <span><i class="fa-solid fa-shoe-prints"></i> 1. Kemahiran Servis</span>
-            <span class="skill-score-badge" id="badge_servis">0.0 / 20.0M</span>
-          </h4>
-          
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Kaki sokongan kekal di dlm bulatan & tidak memijak garisan</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Pandangan mata fokus tepat pada arah bola lambungan</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Ayunan kaki sepak fleksibel & kontak tepat pada bahagian sila</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Pemindahan berat badan dari kaki belakang ke hadapan lancar</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Kelajuan bola padu & melepasi jaring ke zon sasaran</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Ikut lajak pergerakan kaki sepak selari arah bola</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-servis" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Mendarat seimbang & sedia dalam posisi pertahanan</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
+          <div class="skill-block-header">
+            <span class="skill-title"><i class="fa-solid fa-shoe-prints" style="color: var(--primary);"></i> 1. Kemahiran Servis</span>
+            <span class="score-badge" id="badge_servis">20.0 / 20.0M</span>
+          </div>
 
-          <div class="score-override-box">
-            <label>Markah Akhir Servis (Boleh diubah secara manual):</label>
-            <input type="number" id="servis_final" min="0" max="20" step="0.1" value="0.0">
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Sebelum: Imbangan kaki sokongan dlm bulatan & fokus mata</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="servis_f1" value="cemerlang" data-score="6.6" checked onchange="updateAmaliScores()"><label>Cemerlang (6.6M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f1" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f1" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Semasa: Ayunan kaki sepak, kontak sila & ketepatan lajauan</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="servis_f2" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f2" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f2" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Selepas: Ikut lajak pergerakan & pemulihan kedudukan sedia</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="servis_f3" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f3" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="servis_f3" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="score-override-row">
+            <label>Markah Akhir Servis (Boleh ubah manual):</label>
+            <input type="number" id="servis_final" min="0" max="20" step="0.1" value="20.0">
           </div>
         </div>
 
-        <!-- 2. MENGUMPAN (20.0M) -->
+        <!-- 2. MENGUMPAN (20M) -->
         <div class="skill-block">
-          <h4>
-            <span><i class="fa-solid fa-hand-holding-hand"></i> 2. Kemahiran Mengumpan</span>
-            <span class="skill-score-badge" id="badge_umpan">0.0 / 20.0M</span>
-          </h4>
+          <div class="skill-block-header">
+            <span class="skill-title"><i class="fa-solid fa-hand-holding-hand" style="color: var(--primary);"></i> 2. Kemahiran Mengumpan</span>
+            <span class="score-badge" id="badge_umpan">20.0 / 20.0M</span>
+          </div>
 
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Lari & buka langkah awal ke arah kedatangan bola</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Kedudukan kaki sokongan teguh & lutut difleksikan</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Sentuhan lembut kaki/sila mengikut daya kedatangan bola</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Ketinggian umpanan ideal & parabola tepat ke zon perejam</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Bola tidak berputar secara keterlaluan semasa melambung</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Ikut lajak pergerakan kaki ke atas selari parabola</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-umpan" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Memulihkan imbangan diri serta-merta</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Sebelum: Pergerakan menyongsong arah bola & postur sedia</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="umpan_f1" value="cemerlang" data-score="6.6" checked onchange="updateAmaliScores()"><label>Cemerlang (6.6M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f1" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f1" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
 
-          <div class="score-override-box">
-            <label>Markah Akhir Mengumpan (Boleh diubah secara manual):</label>
-            <input type="number" id="umpan_final" min="0" max="20" step="0.1" value="0.0">
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Semasa: Sentuhan lembut, ketinggian parabola & kawalan putaran</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="umpan_f2" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f2" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f2" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Selepas: Ikut lajak ayunan kaki & persediaan pertahanan</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="umpan_f3" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f3" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="umpan_f3" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="score-override-row">
+            <label>Markah Akhir Mengumpan (Boleh ubah manual):</label>
+            <input type="number" id="umpan_final" min="0" max="20" step="0.1" value="20.0">
           </div>
         </div>
 
-        <!-- 3. MENANDUK (20.0M) -->
+        <!-- 3. MENANDUK (20M) -->
         <div class="skill-block">
-          <h4>
-            <span><i class="fa-solid fa-person-dots-from-line"></i> 3. Kemahiran Menanduk</span>
-            <span class="skill-score-badge" id="badge_tanduk">0.0 / 20.0M</span>
-          </h4>
+          <div class="skill-block-header">
+            <span class="skill-title"><i class="fa-solid fa-person-dots-from-line" style="color: var(--primary);"></i> 3. Kemahiran Menanduk</span>
+            <span class="score-badge" id="badge_tanduk">20.0 / 20.0M</span>
+          </div>
 
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Menganggar jarak penerbangan bola secara tepat</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="2.5" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Sebelum:</b> Postur leher fleksibel & mendongak memandang bola</span>
-            <span class="check-item-score">+2.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Kontak dahi (garisan rambut) tepat pada tengah bola</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Kilasan badan & ayunan leher/dada menolak bola</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Semasa:</b> Arah lajauan tandukan terkawal & terarah</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Absorpsi daya serapan & lompatan diserap baik</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-tanduk" data-score="3.0" onchange="updateAmaliScores()">
-            <span class="check-item-text"><b>Selepas:</b> Mendarat dengan kedua-dua belah kaki secara selamat</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Sebelum: Anggaran jarak & fleksibiliti postur leher</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="tanduk_f1" value="cemerlang" data-score="6.6" checked onchange="updateAmaliScores()"><label>Cemerlang (6.6M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f1" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f1" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
 
-          <div class="score-override-box">
-            <label>Markah Akhir Menanduk (Boleh diubah secara manual):</label>
-            <input type="number" id="tanduk_final" min="0" max="20" step="0.1" value="0.0">
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Semasa: Kontak dahi tepat, kilasan dada & kawalan arah</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="tanduk_f2" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f2" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f2" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Fasa Selepas: Serapan daya & pendaratan selamat 2 belah kaki</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="tanduk_f3" value="cemerlang" data-score="6.7" checked onchange="updateAmaliScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f3" value="sederhana" data-score="4.0" onchange="updateAmaliScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="tanduk_f3" value="lemah" data-score="2.0" onchange="updateAmaliScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="score-override-row">
+            <label>Markah Akhir Menanduk (Boleh ubah manual):</label>
+            <input type="number" id="tanduk_final" min="0" max="20" step="0.1" value="20.0">
           </div>
         </div>
 
-        <div class="justification-card">
-          <i class="fa-solid fa-circle-info" style="font-size: 1.1rem;"></i>
-          <span id="justification_amali">Sila tanda senarai semak di atas...</span>
+        <div class="auto-justification-box">
+          <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1rem;"></i>
+          <span id="justification_amali">Menjana analisis justifikasi amali automatik...</span>
         </div>
 
-        <button type="submit" class="btn-submit">
+        <button type="submit" class="btn-action">
           <i class="fa-solid fa-floppy-disk"></i> Simpan Penilaian Amali (<span class="txtRoleDisplay">Penilai 1</span>)
         </button>
       </form>
     </div>
 
-    <!-- MODUL 2: SENARAI SEMAK RUBRIK SIMULASI LATIHAN -->
-    <div id="sec-simulasi" class="card card-form hidden">
-      <div class="card-title">
-        <i class="fa-solid fa-chalkboard-user" style="color: var(--primary);"></i>
-        Senarai Semak Simulasi Latihan (<span class="txtRoleDisplay">Penilai 1</span>)
+    <!-- TAB 2: SENARAI SEMAK RUBRIK SIMULASI LATIHAN -->
+    <div id="sec-simulasi" class="dashboard-card card-form hidden">
+      <div class="card-header">
+        <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--primary);"></i> Penilaian Simulasi Latihan (<span class="txtRoleDisplay">Penilai 1</span>)</h3>
       </div>
 
       <div class="form-group">
-        <label><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
-        <select id="selectPelajarSimulasi" required><option value="">-- Memuatkan... --</option></select>
+        <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
+        <select id="selectPelajarSimulasi" class="input-field" required><option value="">-- Memuatkan Pelajar... --</option></select>
       </div>
 
       <form id="formSimulasi" onsubmit="handleSimulasiSubmit(event)">
         
-        <!-- HPP2: KOGNITIF (20.0M) -->
+        <!-- HPP2: KOGNITIF -->
         <div class="skill-block">
-          <h4>
-            <span><i class="fa-solid fa-brain"></i> HPP2: Kemahiran Kognitif</span>
-            <span class="skill-score-badge" id="badge_hpp2">0.0 / 20.0M</span>
-          </h4>
+          <div class="skill-block-header">
+            <span class="skill-title"><i class="fa-solid fa-brain" style="color: var(--primary);"></i> 1. HPP2: Kemahiran Kognitif</span>
+            <span class="score-badge" id="badge_hpp2">20.0 / 20.0M</span>
+          </div>
 
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Set Induksi & Penutup:</b> Penyampaian objektif pengajaran jelas & teratur</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Ansur Maju Latihan:</b> Susunan dril kemahiran berperingkat dari mudah ke sukar</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Variasi Aktiviti:</b> Menyediakan variasi aktiviti permainan kecil yang menarik</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Prinsip Latihan:</b> Mempertimbangkan intensiti latihan, nisbah kerja-rehat</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.0" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Kefahaman Biomekanik:</b> Menerangkan mekanik fasa perlakuan secara saintifik</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp2" data-score="3.0" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Aspek Keselamatan:</b> Memastikan ruang & alatan selamat digunakan</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
+          <div class="criterion-card">
+            <span class="criterion-desc">Struktur Set Induksi & Penutup RPH (Kejelasan Objektif)</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp2_f1" value="cemerlang" data-score="6.6" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.6M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f1" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f1" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
 
-          <div class="score-override-box">
-            <label>Markah Akhir HPP2 Kognitif (Boleh diubah secara manual):</label>
-            <input type="number" id="simHpp2" min="0" max="20" step="0.1" value="0.0">
+          <div class="criterion-card">
+            <span class="criterion-desc">Ansur Maju Dril Latihan (Urutan Mudah ke Sukar)</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp2_f2" value="cemerlang" data-score="6.7" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f2" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f2" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Aplikasi Prinsip Sains Sukan (Intensiti & Pemulihan)</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp2_f3" value="cemerlang" data-score="6.7" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f3" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp2_f3" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="score-override-row">
+            <label>Markah Akhir HPP2 Kognitif (Boleh ubah manual):</label>
+            <input type="number" id="simHpp2" min="0" max="20" step="0.1" value="20.0">
           </div>
         </div>
 
-        <!-- HPP5: KOMUNIKASI (20.0M) -->
+        <!-- HPP5: KOMUNIKASI -->
         <div class="skill-block">
-          <h4>
-            <span><i class="fa-solid fa-comments"></i> HPP5: Kemahiran Komunikasi</span>
-            <span class="skill-score-badge" id="badge_hpp5">0.0 / 20.0M</span>
-          </h4>
+          <div class="skill-block-header">
+            <span class="skill-title"><i class="fa-solid fa-comments" style="color: var(--primary);"></i> 2. HPP5: Kemahiran Komunikasi</span>
+            <span class="score-badge" id="badge_hpp5">20.0 / 20.0M</span>
+          </div>
 
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Kejelasan Vokal:</b> Nada suara lantang, jelas & tegas kawalan kelas</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Demonstrasi Perlakuan:</b> Kualiti tunjuk cara kemahiran yang tepat & jelas</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Pengurusan Ruang/Alatan:</b> Pengurusan skitel/kon & stesen latihan cekap</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.5" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Pengurusan Masa:</b> Mematuhi peruntukan masa setiap fasa latihan RPH</span>
-            <span class="check-item-score">+3.5M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.0" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Pembetulan Ralat:</b> Memberi maklum balas serta-merta semasa simulasi</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" class="chk-hpp5" data-score="3.0" onchange="updateSimulasiScores()">
-            <span class="check-item-text"><b>Keyakinan Diri:</b> Mempamerkan perawakan pemimpin & semangat motivasi</span>
-            <span class="check-item-score">+3.0M</span>
-          </label>
+          <div class="criterion-card">
+            <span class="criterion-desc">Kejelasan Vokal Arahan & Tunjuk Cara Demonstrasi</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp5_f1" value="cemerlang" data-score="6.6" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.6M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f1" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f1" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
 
-          <div class="score-override-box">
-            <label>Markah Akhir HPP5 Komunikasi (Boleh diubah secara manual):</label>
-            <input type="number" id="simHpp5" min="0" max="20" step="0.1" value="0.0">
+          <div class="criterion-card">
+            <span class="criterion-desc">Pengurusan Masa & Pengawasan Alatan/Stesen</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp5_f2" value="cemerlang" data-score="6.7" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f2" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f2" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="criterion-card">
+            <span class="criterion-desc">Kawalan Kelas & Pembetulan Ralat Serta-merta</span>
+            <div class="segmented-group">
+              <div class="seg-btn"><input type="radio" name="hpp5_f3" value="cemerlang" data-score="6.7" checked onchange="updateSimulasiScores()"><label>Cemerlang (6.7M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f3" value="sederhana" data-score="4.0" onchange="updateSimulasiScores()"><label>Sederhana (4.0M)</label></div>
+              <div class="seg-btn"><input type="radio" name="hpp5_f3" value="lemah" data-score="2.0" onchange="updateSimulasiScores()"><label>Lemah (2.0M)</label></div>
+            </div>
+          </div>
+
+          <div class="score-override-row">
+            <label>Markah Akhir HPP5 Komunikasi (Boleh ubah manual):</label>
+            <input type="number" id="simHpp5" min="0" max="20" step="0.1" value="20.0">
           </div>
         </div>
 
-        <div class="justification-card">
-          <i class="fa-solid fa-circle-info" style="font-size: 1.1rem;"></i>
-          <span id="justification_simulasi">Sila tanda senarai semak di atas...</span>
+        <div class="auto-justification-box">
+          <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1rem;"></i>
+          <span id="justification_simulasi">Menjana analisis justifikasi simulasi automatik...</span>
         </div>
 
         <div class="form-group" style="margin-top: 10px;">
-          <label>Catatan Ulasan Tambahan Penilai</label>
-          <textarea id="catatanSimulasi" rows="2" placeholder="Catatan ulasan..."></textarea>
+          <label class="field-label">Catatan Tambahan Penilai</label>
+          <textarea id="catatanSimulasi" class="input-field" rows="2" placeholder="Catatan ulasan..."></textarea>
         </div>
 
-        <button type="submit" class="btn-submit" style="background: var(--primary);">
+        <button type="submit" class="btn-action" style="background: var(--accent);">
           <i class="fa-solid fa-floppy-disk"></i> Simpan Penilaian Simulasi (<span class="txtRoleDisplay">Penilai 1</span>)
         </button>
       </form>
     </div>
 
-    <!-- MODUL 3: LAPORAN PENUH INDIVIDU & CETAKAN -->
-    <div id="sec-laporan" class="card hidden">
+    <!-- TAB 3: PROFIL DASHBOARD & SPIDER RADAR CHART -->
+    <div id="sec-dashboard" class="dashboard-card hidden">
       
-      <div class="uploader-card card-form" style="background:#f1f5f9; padding:10px; border-radius:14px; margin-bottom:12px; box-shadow: var(--clay-input-shadow);">
-        <label><i class="fa-solid fa-image"></i> Muat Naik Logo IPG Kampus Darulaman (Untuk Pengepala):</label>
+      <div class="card-header card-form">
+        <h3><i class="fa-solid fa-chart-line" style="color: var(--primary);"></i> Dashboard Profil & Visual Spider Radar</h3>
+      </div>
+
+      <!-- MUAT NAIK LOGO IPG -->
+      <div class="uploader-box card-form" style="background:#f8fafc; padding:10px 14px; border-radius:14px; margin-bottom:14px; border:1px solid var(--border);">
+        <label class="field-label" style="margin-bottom:2px;"><i class="fa-solid fa-image"></i> Muat Naik Logo IPG Kampus Darulaman (Untuk Borang Laporan):</label>
         <input type="file" id="logoUploader" accept="image/*" onchange="previewLogo(event)">
       </div>
 
-      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;" class="card-form">
-        <select id="selectPelajarLaporan" style="flex:1;"><option value="">-- Pilih Pelajar Untuk Penjanaan Laporan --</option></select>
-        <button onclick="janaLaporan()" style="background: var(--accent); color: white; border: none; padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: bold;">Jana Laporan</button>
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 16px;" class="card-form">
+        <select id="selectPelajarLaporan" class="input-field" style="flex:1;"><option value="">-- Pilih Pelajar Untuk Lihat Profil --</option></select>
+        <button onclick="janaLaporan()" class="btn-action" style="width: auto; margin-top: 0; padding: 10px 20px;">
+          <i class="fa-solid fa-eye"></i> Papar Profil
+        </button>
       </div>
 
       <div id="reportContainer" class="hidden">
-        <button onclick="window.print()" class="btn-submit btn-print" style="background:#1e40af; margin-bottom:12px;">
-          <i class="fa-solid fa-print"></i> Cetak Laporan (PDF / Kertas)
+        
+        <!-- DASHBOARD GRID: VISUAL SPIDER RADAR & KPI METRICS -->
+        <div class="profile-grid card-form" style="margin-bottom: 20px;">
+          
+          <!-- KIRI: KAD METRIK PRESTASI -->
+          <div>
+            <div style="background: #f8fafc; padding: 14px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px;">
+              <h4 id="dashNama" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);">-</h4>
+              <p id="dashAG" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">-</p>
+              <p id="dashUnit" style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">-</p>
+            </div>
+
+            <div class="stat-kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-title">Amali (60%)</div>
+                <div class="kpi-value" id="kpiAmali" style="color: var(--primary);">-</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Simulasi (40%)</div>
+                <div class="kpi-value" id="kpiSimulasi" style="color: var(--accent);">-</div>
+              </div>
+            </div>
+
+            <div class="kpi-card" style="background: var(--primary-soft); border-color: #bbf7d0;">
+              <div class="kpi-title" style="color: var(--primary);">JUMLAH KESELURUHAN (100%)</div>
+              <div class="kpi-value" id="kpiTotal" style="color: var(--primary); font-size: 1.5rem;">-</div>
+            </div>
+          </div>
+
+          <!-- KANAN: SPIDER RADAR CHART -->
+          <div class="radar-container">
+            <canvas id="radarChart"></canvas>
+          </div>
+
+        </div>
+
+        <button onclick="window.print()" class="btn-action btn-print" style="background:#1e40af; margin-bottom:16px;">
+          <i class="fa-solid fa-print"></i> Cetak Laporan Penuh (PDF / Kertas)
         </button>
 
+        <!-- CETAKAN BORANG LAPORAN RASMI -->
         <div class="report-sheet">
           <div class="report-header">
             <img id="imgLogoPreview" class="logo-img" src="" alt="Logo IPG" style="display:none; margin:0 auto 4px auto;">
@@ -653,15 +738,19 @@
 
       </div>
     </div>
+
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxLFpYRZ6uplbfHYCIqq-0FdcWxUWfvt0rDaCPNdzVughBAFKUwn_E-h97tSFoPCaGmSg/exec";
 
     let rawPelajarList = [];
+    let radarChartInstance = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       loadPelajarData();
+      updateAmaliScores();
+      updateSimulasiScores();
       updateRoleUI();
     });
 
@@ -694,16 +783,18 @@
       const role = document.getElementById('evaluatorRole').value;
       const roleLabels = document.querySelectorAll('.txtRoleDisplay');
       roleLabels.forEach(el => el.innerText = role === 'P1' ? 'Penilai 1' : 'Penilai 2');
+      updateAmaliScores();
+      updateSimulasiScores();
     }
 
     function switchTab(tab) {
       document.getElementById('btn-tab-amali').classList.toggle('active', tab === 'amali');
       document.getElementById('btn-tab-simulasi').classList.toggle('active', tab === 'simulasi');
-      document.getElementById('btn-tab-laporan').classList.toggle('active', tab === 'laporan');
+      document.getElementById('btn-tab-dashboard').classList.toggle('active', tab === 'dashboard');
 
       document.getElementById('sec-amali').classList.toggle('hidden', tab !== 'amali');
       document.getElementById('sec-simulasi').classList.toggle('hidden', tab !== 'simulasi');
-      document.getElementById('sec-laporan').classList.toggle('hidden', tab !== 'laporan');
+      document.getElementById('sec-dashboard').classList.toggle('hidden', tab !== 'dashboard');
     }
 
     function showAlert(msg, isError = false) {
@@ -731,67 +822,65 @@
       document.getElementById('selectPelajarLaporan').innerHTML = opts;
     }
 
-    // LOGIK PENGIRAAN AUTOMATIK DARI CHECKBOX AMALI
+    // UPDATE AMALI SCORES
     function updateAmaliScores() {
       const role = document.getElementById('evaluatorRole').value;
 
-      // Servis
-      let sSum = 0;
-      document.querySelectorAll('.chk-servis:checked').forEach(c => sSum += parseFloat(c.dataset.score));
-      sSum = Math.min(20, sSum);
-      document.getElementById('badge_servis').innerText = `${sSum.toFixed(1)} / 20.0M`;
-      document.getElementById('servis_final').value = sSum.toFixed(1);
+      let s1 = parseFloat(document.querySelector('input[name="servis_f1"]:checked').dataset.score);
+      let s2 = parseFloat(document.querySelector('input[name="servis_f2"]:checked').dataset.score);
+      let s3 = parseFloat(document.querySelector('input[name="servis_f3"]:checked').dataset.score);
+      let sTotal = Math.min(20, (s1 + s2 + s3)).toFixed(1);
+      document.getElementById('badge_servis').innerText = `${sTotal} / 20.0M`;
+      document.getElementById('servis_final').value = sTotal;
 
-      // Mengumpan
-      let uSum = 0;
-      document.querySelectorAll('.chk-umpan:checked').forEach(c => uSum += parseFloat(c.dataset.score));
-      uSum = Math.min(20, uSum);
-      document.getElementById('badge_umpan').innerText = `${uSum.toFixed(1)} / 20.0M`;
-      document.getElementById('umpan_final').value = uSum.toFixed(1);
+      let u1 = parseFloat(document.querySelector('input[name="umpan_f1"]:checked').dataset.score);
+      let u2 = parseFloat(document.querySelector('input[name="umpan_f2"]:checked').dataset.score);
+      let u3 = parseFloat(document.querySelector('input[name="umpan_f3"]:checked').dataset.score);
+      let uTotal = Math.min(20, (u1 + u2 + u3)).toFixed(1);
+      document.getElementById('badge_umpan').innerText = `${uTotal} / 20.0M`;
+      document.getElementById('umpan_final').value = uTotal;
 
-      // Menanduk
-      let tSum = 0;
-      document.querySelectorAll('.chk-tanduk:checked').forEach(c => tSum += parseFloat(c.dataset.score));
-      tSum = Math.min(20, tSum);
-      document.getElementById('badge_tanduk').innerText = `${tSum.toFixed(1)} / 20.0M`;
-      document.getElementById('tanduk_final').value = tSum.toFixed(1);
+      let t1 = parseFloat(document.querySelector('input[name="tanduk_f1"]:checked').dataset.score);
+      let t2 = parseFloat(document.querySelector('input[name="tanduk_f2"]:checked').dataset.score);
+      let t3 = parseFloat(document.querySelector('input[name="tanduk_f3"]:checked').dataset.score);
+      let tTotal = Math.min(20, (t1 + t2 + t3)).toFixed(1);
+      document.getElementById('badge_tanduk').innerText = `${tTotal} / 20.0M`;
+      document.getElementById('tanduk_final').value = tTotal;
 
-      const totalAmali = (sSum + uSum + tSum).toFixed(1);
+      const grandTotal = (parseFloat(sTotal) + parseFloat(uTotal) + parseFloat(tTotal)).toFixed(1);
 
-      // PENJANAN JUSTIFIKASI AUTOMATIK AMALI
-      let autoJust = `Justifikasi Amali [${role}]: Jumlah Cadangan (${totalAmali}/60.0M). `;
-      if (totalAmali >= 50) autoJust += "Pelajar menguasai sebahagian besar kriteria perlakuan sebelum, semasa & selepas secara konsisten.";
-      else if (totalAmali >= 30) autoJust += "Pelajar menguasai perlakuan asas tetapi memerlukan bimbingan kawalan kualiti & fasa mendarat.";
-      else autoJust += "Penguasaan fasa perlakuan amali masih berada pada tahap lemah & memerlukan pembetulan ralat.";
+      let autoJust = `Justifikasi Amali [${role}]: Total (${grandTotal}/60.0M). `;
+      if (grandTotal >= 50) autoJust += "Cemerlang: Penguasaan fasa perlakuan amali amat konsisten.";
+      else if (grandTotal >= 35) autoJust += "Sederhana: Menguasai teknik asas; perlu penambahbaikan fasa semasa.";
+      else autoJust += "Lemah: Memerlukan bimbingan latihan semula.";
 
       document.getElementById('justification_amali').innerText = autoJust;
     }
 
-    // LOGIK PENGIRAAN AUTOMATIK DARI CHECKBOX SIMULASI
+    // UPDATE SIMULASI SCORES
     function updateSimulasiScores() {
       const role = document.getElementById('evaluatorRole').value;
 
-      // HPP2 Kognitif
-      let h2Sum = 0;
-      document.querySelectorAll('.chk-hpp2:checked').forEach(c => h2Sum += parseFloat(c.dataset.score));
-      h2Sum = Math.min(20, h2Sum);
-      document.getElementById('badge_hpp2').innerText = `${h2Sum.toFixed(1)} / 20.0M`;
-      document.getElementById('simHpp2').value = h2Sum.toFixed(1);
+      let h2_1 = parseFloat(document.querySelector('input[name="hpp2_f1"]:checked').dataset.score);
+      let h2_2 = parseFloat(document.querySelector('input[name="hpp2_f2"]:checked').dataset.score);
+      let h2_3 = parseFloat(document.querySelector('input[name="hpp2_f3"]:checked').dataset.score);
+      let h2Total = Math.min(20, (h2_1 + h2_2 + h2_3)).toFixed(1);
+      document.getElementById('badge_hpp2').innerText = `${h2Total} / 20.0M`;
+      document.getElementById('simHpp2').value = h2Total;
 
-      // HPP5 Komunikasi
-      let h5Sum = 0;
-      document.querySelectorAll('.chk-hpp5:checked').forEach(c => h5Sum += parseFloat(c.dataset.score));
-      h5Sum = Math.min(20, h5Sum);
-      document.getElementById('badge_hpp5').innerText = `${h5Sum.toFixed(1)} / 20.0M`;
-      document.getElementById('simHpp5').value = h5Sum.toFixed(1);
+      let h5_1 = parseFloat(document.querySelector('input[name="hpp5_f1"]:checked').dataset.score);
+      let h5_2 = parseFloat(document.querySelector('input[name="hpp5_f2"]:checked').dataset.score);
+      let h5_3 = parseFloat(document.querySelector('input[name="hpp5_f3"]:checked').dataset.score);
+      let h5Total = Math.min(20, (h5_1 + h5_2 + h5_3)).toFixed(1);
+      document.getElementById('badge_hpp5').innerText = `${h5Total} / 20.0M`;
+      document.getElementById('simHpp5').value = h5Total;
 
-      const totalSim = (h2Sum + h5Sum).toFixed(1);
+      const totalSim = (parseFloat(h2Total) + parseFloat(h5Total)).toFixed(1);
 
-      // PENJANAN JUSTIFIKASI AUTOMATIK SIMULASI
-      let autoJustSim = `Justifikasi Simulasi [${role}]: Jumlah Cadangan (${totalSim}/40.0M). `;
-      if (totalSim >= 34) autoJustSim += "Penyampaian RPH amat sistematik, vokal jelas, kawalan stesen cekap & keyakinan tinggi.";
-      else if (totalSim >= 22) autoJustSim += "Perancangan RPH teratur; kawalan masa & arahan latihan memuaskan.";
-      else autoJustSim += "Perancangan RPH & penyampaian simulasi memerlukan penambahbaikan struktur asas.";
+      let autoJustSim = `Justifikasi Simulasi [${role}]: Total (${totalSim}/40.0M). `;
+      if (totalSim >= 34) autoJustSim += "Cemerlang: Penyampaian RPH sistematik, vokal & kawalan kelas kukuh.";
+      else if (totalSim >= 24) autoJustSim += "Sederhana: Perancangan teratur, kawalan masa memuaskan.";
+      else autoJustSim += "Lemah: Penyampaian simulasi memerlukan bimbingan.";
 
       document.getElementById('justification_simulasi').innerText = autoJustSim;
     }
@@ -849,21 +938,32 @@
 
       try {
         const data = await apiGet('getLaporan', { angkaGiliran: ag });
-        renderReport(data);
+        renderReportAndRadar(data);
       } catch (err) {
         showAlert(err.message, true);
       }
     }
 
-    function renderReport(data) {
+    function renderReportAndRadar(data) {
       document.getElementById('reportContainer').classList.remove('hidden');
+
+      // INFO PELAJAR
+      document.getElementById('dashNama').innerText = data.pelajar.nama;
+      document.getElementById('dashAG').innerText = `Angka Giliran: ${data.pelajar.angkaGiliran}`;
+      document.getElementById('dashUnit').innerText = `Unit: ${data.pelajar.unit}`;
 
       document.getElementById('rptNama').innerText = data.pelajar.nama;
       document.getElementById('rptUnit').innerText = data.pelajar.unit;
       document.getElementById('rptAG').innerText = data.pelajar.angkaGiliran;
       document.getElementById('rptKP').innerText = data.pelajar.nokp;
 
+      let sVal = 0, uVal = 0, tVal = 0, h2Val = 0, h5Val = 0;
+
       if (data.amali) {
+        sVal = (parseFloat(data.amali.p1S) + parseFloat(data.amali.p2S)) / (data.amali.p2S > 0 ? 2 : 1);
+        uVal = (parseFloat(data.amali.p1U) + parseFloat(data.amali.p2U)) / (data.amali.p2U > 0 ? 2 : 1);
+        tVal = (parseFloat(data.amali.p1T) + parseFloat(data.amali.p2T)) / (data.amali.p2T > 0 ? 2 : 1);
+
         document.getElementById('rptP1S').innerText = data.amali.p1S;
         document.getElementById('rptP1U').innerText = data.amali.p1U;
         document.getElementById('rptP1T').innerText = data.amali.p1T;
@@ -876,12 +976,17 @@
         document.getElementById('rptP2J').innerText = data.amali.p2J + ' / 60';
         document.getElementById('rptP2Just').innerText = data.amali.p2Just || '-';
 
-        document.getElementById('rptWajaran60').innerText = `${data.amali.wajaran60} %`;
+        document.getElementById('rptWajaran60').innerText = `${data.amali.wajaran60}%`;
+        document.getElementById('kpiAmali').innerText = `${data.amali.wajaran60}%`;
       } else {
         document.getElementById('rptWajaran60').innerText = 'Belum Dinilai';
+        document.getElementById('kpiAmali').innerText = '0%';
       }
 
       if (data.simulasi) {
+        h2Val = parseFloat(data.simulasi.purataH2);
+        h5Val = parseFloat(data.simulasi.purataH5);
+
         document.getElementById('rptP1H2').innerText = data.simulasi.p1H2;
         document.getElementById('rptP1H5').innerText = data.simulasi.p1H5;
         document.getElementById('rptP1SimJ').innerText = data.simulasi.p1J + ' / 40';
@@ -891,15 +996,60 @@
         document.getElementById('rptP2SimJ').innerText = data.simulasi.p2J + ' / 40';
 
         document.getElementById('rptWajaran40').innerText = `${data.simulasi.wajaran40}%`;
+        document.getElementById('kpiSimulasi').innerText = `${data.simulasi.wajaran40}%`;
       } else {
         document.getElementById('rptWajaran40').innerText = 'Belum Dinilai';
+        document.getElementById('kpiSimulasi').innerText = '0%';
       }
 
       const amaliW = data.amali ? Number(data.amali.wajaran60) : 0;
       const simW = data.simulasi ? Number(data.simulasi.wajaran40) : 0;
       const total100 = (amaliW + simW).toFixed(1);
 
-      document.getElementById('rptJumlah100').innerText = `${total100} %`;
+      document.getElementById('rptJumlah100').innerText = `${total100}%`;
+      document.getElementById('kpiTotal').innerText = `${total100}%`;
+
+      // BINA/KEMAS KINI SPIDER RADAR CHART (CHART.JS)
+      renderRadarChart([sVal, uVal, tVal, h2Val, h5Val]);
+    }
+
+    // FUNGSI BINA GRAF SPIDER RADAR
+    function renderRadarChart(scores) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      if (radarChartInstance) radarChartInstance.destroy();
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Servis (20M)', 'Mengumpan (20M)', 'Menanduk (20M)', 'HPP2 Kognitif (20M)', 'HPP5 Komunikasi (20M)'],
+          datasets: [{
+            label: 'Profil Kemahiran',
+            data: scores,
+            backgroundColor: 'rgba(34, 197, 94, 0.25)',
+            borderColor: '#16a34a',
+            pointBackgroundColor: '#15803d',
+            pointBorderColor: '#ffffff',
+            pointHoverBackgroundColor: '#ffffff',
+            pointHoverBorderColor: '#15803d',
+            borderWidth: 2.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              min: 0,
+              max: 20,
+              ticks: { stepSize: 5, font: { size: 9, weight: 'bold' } },
+              pointLabels: { font: { size: 10, weight: 'bold' }, color: '#334155' }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
     }
   </script>
 </body>
