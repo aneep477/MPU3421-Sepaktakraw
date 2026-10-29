@@ -179,7 +179,7 @@
     }
     .criterion-desc { font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 8px; display: block; }
 
-    /* SEGMENTED BUTTONS (MESRA TELEFON & SEPENUHNYA INTERAKTIF) */
+    /* SEGMENTED BUTTONS */
     .segmented-group { display: flex; gap: 6px; }
     
     .seg-btn {
@@ -191,7 +191,6 @@
       -webkit-tap-highlight-color: transparent;
     }
     
-    /* Sembunyikan titik radio asli */
     .seg-btn input[type="radio"] {
       position: absolute;
       opacity: 0;
@@ -199,7 +198,6 @@
       height: 0;
     }
 
-    /* Butang Visual Pill */
     .seg-btn .btn-text {
       display: block;
       text-align: center;
@@ -213,7 +211,6 @@
       transition: all 0.2s ease;
     }
 
-    /* Gaya apabila dipilih */
     .seg-btn input[value="cemerlang"]:checked + .btn-text {
       background: #22c55e;
       color: #ffffff;
@@ -236,7 +233,6 @@
       box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
     }
 
-    /* OVERRIDE MARKAH */
     .score-override-row {
       display: flex;
       align-items: center;
@@ -391,7 +387,7 @@
 
       <div class="form-group">
         <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
-        <select id="selectPelajarAmali" class="input-field" required><option value="">-- Memuatkan Pelajar... --</option></select>
+        <select id="selectPelajarAmali" class="input-field" onchange="resetAmaliForm()" required><option value="">-- Memuatkan Pelajar... --</option></select>
       </div>
 
       <form id="formAmali" onsubmit="handleAmaliSubmit(event)">
@@ -616,7 +612,7 @@
 
       <div class="form-group">
         <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar</label>
-        <select id="selectPelajarSimulasi" class="input-field" required><option value="">-- Memuatkan Pelajar... --</option></select>
+        <select id="selectPelajarSimulasi" class="input-field" onchange="resetSimulasiForm()" required><option value="">-- Memuatkan Pelajar... --</option></select>
       </div>
 
       <form id="formSimulasi" onsubmit="handleSimulasiSubmit(event)">
@@ -917,8 +913,6 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       loadPelajarData();
-      updateAmaliScores();
-      updateSimulasiScores();
       updateRoleUI();
     });
 
@@ -947,12 +941,35 @@
       return await res.json();
     }
 
+    // FUNGSI RESET BORANG AMALI
+    function resetAmaliForm() {
+      const defaultNames = ['servis_f1', 'servis_f2', 'servis_f3', 'umpan_f1', 'umpan_f2', 'umpan_f3', 'tanduk_f1', 'tanduk_f2', 'tanduk_f3'];
+      defaultNames.forEach(name => {
+        const rad = document.querySelector(`input[name="${name}"][value="cemerlang"]`);
+        if (rad) rad.checked = true;
+      });
+      updateAmaliScores();
+    }
+
+    // FUNGSI RESET BORANG SIMULASI
+    function resetSimulasiForm() {
+      const defaultNames = ['hpp2_f1', 'hpp2_f2', 'hpp2_f3', 'hpp5_f1', 'hpp5_f2', 'hpp5_f3'];
+      defaultNames.forEach(name => {
+        const rad = document.querySelector(`input[name="${name}"][value="cemerlang"]`);
+        if (rad) rad.checked = true;
+      });
+      document.getElementById('catatanSimulasi').value = '';
+      updateSimulasiScores();
+    }
+
     function updateRoleUI() {
       const role = document.getElementById('evaluatorRole').value;
       const roleLabels = document.querySelectorAll('.txtRoleDisplay');
       roleLabels.forEach(el => el.innerText = role === 'P1' ? 'Penilai 1' : 'Penilai 2');
-      updateAmaliScores();
-      updateSimulasiScores();
+
+      // RESET BORANG KE PADA 'DEFAULT' SETIAP KALI ROLE PENILAI DITUKAR
+      resetAmaliForm();
+      resetSimulasiForm();
     }
 
     function switchTab(tab) {
@@ -990,7 +1007,6 @@
       document.getElementById('selectPelajarLaporan').innerHTML = opts;
     }
 
-    // UPDATE AMALI SCORES
     function updateAmaliScores() {
       const role = document.getElementById('evaluatorRole').value;
 
@@ -1025,7 +1041,6 @@
       document.getElementById('justification_amali').innerText = autoJust;
     }
 
-    // UPDATE SIMULASI SCORES
     function updateSimulasiScores() {
       const role = document.getElementById('evaluatorRole').value;
 
@@ -1072,6 +1087,7 @@
       try {
         const res = await apiPost('simpanAmali', payload);
         showAlert(res.message);
+        resetAmaliForm();
       } catch (err) {
         showAlert(err.message, true);
       }
@@ -1095,6 +1111,7 @@
       try {
         const res = await apiPost('simpanSimulasi', payload);
         showAlert(res.message);
+        resetSimulasiForm();
       } catch (err) {
         showAlert(err.message, true);
       }
@@ -1115,7 +1132,6 @@
     function renderReportAndRadar(data) {
       document.getElementById('reportContainer').classList.remove('hidden');
 
-      // INFO PELAJAR
       document.getElementById('dashNama').innerText = data.pelajar.nama;
       document.getElementById('dashAG').innerText = `Angka Giliran: ${data.pelajar.angkaGiliran}`;
       document.getElementById('dashUnit').innerText = `Unit: ${data.pelajar.unit}`;
@@ -1177,7 +1193,6 @@
       document.getElementById('rptJumlah100').innerText = `${total100}%`;
       document.getElementById('kpiTotal').innerText = `${total100}%`;
 
-      // SPIDER RADAR CHART (CHART.JS)
       renderRadarChart([sVal, uVal, tVal, h2Val, h5Val]);
     }
 
