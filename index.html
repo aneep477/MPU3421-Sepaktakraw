@@ -456,7 +456,7 @@
           <div class="skill-block">
             <div class="skill-block-header">
               <span class="skill-title"><i class="fa-solid fa-shoe-prints" style="color: var(--primary);"></i> 1. Kemahiran Servis</span>
-              <span class="score-badge" id="badge_servis_best">Purata: 20.0 / 20.0M</span>
+              <span class="score-badge" id="badge_servis_best">Terbaik: 20.0 / 20.0M</span>
             </div>
 
             <div class="criterion-card">
@@ -507,7 +507,7 @@
           <div class="skill-block">
             <div class="skill-block-header">
               <span class="skill-title"><i class="fa-solid fa-hand-holding-hand" style="color: var(--primary);"></i> 2. Kemahiran Mengumpan</span>
-              <span class="score-badge" id="badge_umpan_best">Purata: 20.0 / 20.0M</span>
+              <span class="score-badge" id="badge_umpan_best">Terbaik: 20.0 / 20.0M</span>
             </div>
 
             <div class="criterion-card">
@@ -558,7 +558,7 @@
           <div class="skill-block">
             <div class="skill-block-header">
               <span class="skill-title"><i class="fa-solid fa-person-dots-from-line" style="color: var(--primary);"></i> 3. Kemahiran Menanduk</span>
-              <span class="score-badge" id="badge_tanduk_best">Purata: 20.0 / 20.0M</span>
+              <span class="score-badge" id="badge_tanduk_best">Terbaik: 20.0 / 20.0M</span>
             </div>
 
             <div class="criterion-card">
@@ -797,9 +797,9 @@
               <thead>
                 <tr>
                   <th>Penilai</th>
-                  <th>Servis (/20)</th>
-                  <th>Mengumpan (/20)</th>
-                  <th>Menanduk (/20)</th>
+                  <th>Servis Terbaik (/20)</th>
+                  <th>Mengumpan Terbaik (/20)</th>
+                  <th>Menanduk Terbaik (/20)</th>
                   <th>Jumlah Amali (/60)</th>
                   <th>Justifikasi Ringkas Prestasi</th>
                 </tr>
@@ -807,9 +807,6 @@
               <tbody>
                 <tr><td>Penilai 1 (P1)</td><td id="rptP1S">-</td><td id="rptP1U">-</td><td id="rptP1T">-</td><td id="rptP1J">-</td><td id="rptP1Just" style="font-size:0.72rem;">-</td></tr>
                 <tr><td>Penilai 2 (P2)</td><td id="rptP2S">-</td><td id="rptP2U">-</td><td id="rptP2T">-</td><td id="rptP2J">-</td><td id="rptP2Just" style="font-size:0.72rem;">-</td></tr>
-                <tr style="font-weight:bold; background:#dcfce7;">
-                  <td>Purata P1 &amp; P2 (Jumlah Kemahiran)</td><td id="rptAvgS">-</td><td id="rptAvgU">-</td><td id="rptAvgT">-</td><td id="rptAvgJ">-</td><td>-</td>
-                </tr>
                 <tr style="font-weight:bold; background:#f8fafc;">
                   <td colspan="4">Purata Markah Amali Keseluruhan (60% Wajaran):</td>
                   <td colspan="2" id="rptWajaran60">-</td>
@@ -830,9 +827,6 @@
               <tbody>
                 <tr><td>Penilai 1 (P1)</td><td id="rptP1H2">-</td><td id="rptP1H5">-</td><td id="rptP1SimJ">-</td></tr>
                 <tr><td>Penilai 2 (P2)</td><td id="rptP2H2">-</td><td id="rptP2H5">-</td><td id="rptP2SimJ">-</td></tr>
-                <tr style="font-weight:bold; background:#dcfce7;">
-                  <td>Purata P1 &amp; P2 (Jumlah Simulasi)</td><td id="rptAvgH2">-</td><td id="rptAvgH5">-</td><td id="rptAvgSimJ">-</td>
-                </tr>
                 <tr style="font-weight:bold; background:#f8fafc;">
                   <td colspan="3">Purata Wajaran Simulasi (40%):</td>
                   <td id="rptWajaran40">-</td>
@@ -1047,26 +1041,26 @@
     function calculateAmaliScore() {
       const s1 = parseFloat(document.getElementById('servis_p1').value) || 0;
       const s2 = parseFloat(document.getElementById('servis_p2').value) || 0;
-      const sBest = purataDuaPenilai(s1, s2).toFixed(1);
-      document.getElementById('badge_servis_best').innerText = `Purata: ${sBest} / 20.0M`;
+      const sBest = Math.max(s1, s2).toFixed(1);
+      document.getElementById('badge_servis_best').innerText = `Terbaik: ${sBest} / 20.0M`;
       document.getElementById('txt_servis_best').innerText = `${sBest} M`;
 
       const u1 = parseFloat(document.getElementById('umpan_p1').value) || 0;
       const u2 = parseFloat(document.getElementById('umpan_p2').value) || 0;
-      const uBest = purataDuaPenilai(u1, u2).toFixed(1);
-      document.getElementById('badge_umpan_best').innerText = `Purata: ${uBest} / 20.0M`;
+      const uBest = Math.max(u1, u2).toFixed(1);
+      document.getElementById('badge_umpan_best').innerText = `Terbaik: ${uBest} / 20.0M`;
       document.getElementById('txt_umpan_best').innerText = `${uBest} M`;
 
       const t1 = parseFloat(document.getElementById('tanduk_p1').value) || 0;
       const t2 = parseFloat(document.getElementById('tanduk_p2').value) || 0;
-      const tBest = purataDuaPenilai(t1, t2).toFixed(1);
-      document.getElementById('badge_tanduk_best').innerText = `Purata: ${tBest} / 20.0M`;
+      const tBest = Math.max(t1, t2).toFixed(1);
+      document.getElementById('badge_tanduk_best').innerText = `Terbaik: ${tBest} / 20.0M`;
       document.getElementById('txt_tanduk_best').innerText = `${tBest} M`;
 
       const grandTotal = (parseFloat(sBest) + parseFloat(uBest) + parseFloat(tBest)).toFixed(1);
       const role = document.getElementById('evaluatorRole').value;
 
-      let autoJust = `Justifikasi Amali [${role}]: Jumlah Purata P1 & P2 (${grandTotal}/60.0M). `;
+      let autoJust = `Justifikasi Amali [${role}]: Total Markah Terbaik (${grandTotal}/60.0M). `;
       if (grandTotal >= 50) autoJust += "Cemerlang: Penguasaan fasa perlakuan amali amat konsisten di antara percubaan.";
       else if (grandTotal >= 35) autoJust += "Sederhana: Menguasai teknik asas; terdapat peningkatan pada percubaan terbaik.";
       else autoJust += "Lemah: Memerlukan bimbingan latihan semula.";
@@ -1248,13 +1242,6 @@
       }
     }
 
-    // Purata markah P1 dan P2 bagi satu kemahiran. Penilai yang belum menilai (kosong / 0) tidak dikira.
-    function purataDuaPenilai(nilaiP1, nilaiP2) {
-      const vals = [nilaiP1, nilaiP2].map(v => parseFloat(v)).filter(v => !isNaN(v) && v > 0);
-      if (vals.length === 0) return 0;
-      return vals.reduce((sum, v) => sum + v, 0) / vals.length;
-    }
-
     function renderReportAndRadar(data) {
       document.getElementById('reportContainer').classList.remove('hidden');
 
@@ -1268,18 +1255,11 @@
       document.getElementById('rptKP').innerText = data.pelajar.nokp;
 
       let sVal = 0, uVal = 0, tVal = 0, h2Val = 0, h5Val = 0;
-      let amaliJumlah = 0, simJumlah = 0;
 
       if (data.amali) {
-        sVal = purataDuaPenilai(data.amali.p1S, data.amali.p2S);
-        uVal = purataDuaPenilai(data.amali.p1U, data.amali.p2U);
-        tVal = purataDuaPenilai(data.amali.p1T, data.amali.p2T);
-        amaliJumlah = sVal + uVal + tVal;
-
-        document.getElementById('rptAvgS').innerText = sVal.toFixed(1);
-        document.getElementById('rptAvgU').innerText = uVal.toFixed(1);
-        document.getElementById('rptAvgT').innerText = tVal.toFixed(1);
-        document.getElementById('rptAvgJ').innerText = amaliJumlah.toFixed(1) + ' / 60';
+        sVal = (parseFloat(data.amali.p1S) + parseFloat(data.amali.p2S)) / (data.amali.p2S > 0 ? 2 : 1);
+        uVal = (parseFloat(data.amali.p1U) + parseFloat(data.amali.p2U)) / (data.amali.p2U > 0 ? 2 : 1);
+        tVal = (parseFloat(data.amali.p1T) + parseFloat(data.amali.p2T)) / (data.amali.p2T > 0 ? 2 : 1);
 
         document.getElementById('rptP1S').innerText = data.amali.p1S;
         document.getElementById('rptP1U').innerText = data.amali.p1U;
@@ -1293,23 +1273,16 @@
         document.getElementById('rptP2J').innerText = data.amali.p2J + ' / 60';
         document.getElementById('rptP2Just').innerText = data.amali.p2Just || '-';
 
-        // Wajaran 60%: jumlah purata (/60) dikira terus sebagai peratus kerana 60 markah = 60%
-        const wajaran60 = amaliJumlah.toFixed(1);
-        document.getElementById('rptWajaran60').innerText = `${wajaran60}%`;
-        document.getElementById('kpiAmali').innerText = `${wajaran60}%`;
+        document.getElementById('rptWajaran60').innerText = `${data.amali.wajaran60}%`;
+        document.getElementById('kpiAmali').innerText = `${data.amali.wajaran60}%`;
       } else {
         document.getElementById('rptWajaran60').innerText = 'Belum Dinilai';
         document.getElementById('kpiAmali').innerText = '0%';
       }
 
       if (data.simulasi) {
-        h2Val = purataDuaPenilai(data.simulasi.p1H2, data.simulasi.p2H2);
-        h5Val = purataDuaPenilai(data.simulasi.p1H5, data.simulasi.p2H5);
-        simJumlah = h2Val + h5Val;
-
-        document.getElementById('rptAvgH2').innerText = h2Val.toFixed(1);
-        document.getElementById('rptAvgH5').innerText = h5Val.toFixed(1);
-        document.getElementById('rptAvgSimJ').innerText = simJumlah.toFixed(1) + ' / 40';
+        h2Val = parseFloat(data.simulasi.purataH2);
+        h5Val = parseFloat(data.simulasi.purataH5);
 
         document.getElementById('rptP1H2').innerText = data.simulasi.p1H2;
         document.getElementById('rptP1H5').innerText = data.simulasi.p1H5;
@@ -1319,17 +1292,15 @@
         document.getElementById('rptP2H5').innerText = data.simulasi.p2H5;
         document.getElementById('rptP2SimJ').innerText = data.simulasi.p2J + ' / 40';
 
-        // Wajaran 40%: jumlah purata (/40) dikira terus sebagai peratus kerana 40 markah = 40%
-        const wajaran40 = simJumlah.toFixed(1);
-        document.getElementById('rptWajaran40').innerText = `${wajaran40}%`;
-        document.getElementById('kpiSimulasi').innerText = `${wajaran40}%`;
+        document.getElementById('rptWajaran40').innerText = `${data.simulasi.wajaran40}%`;
+        document.getElementById('kpiSimulasi').innerText = `${data.simulasi.wajaran40}%`;
       } else {
         document.getElementById('rptWajaran40').innerText = 'Belum Dinilai';
         document.getElementById('kpiSimulasi').innerText = '0%';
       }
 
-      const amaliW = data.amali ? amaliJumlah : 0;
-      const simW = data.simulasi ? simJumlah : 0;
+      const amaliW = data.amali ? Number(data.amali.wajaran60) : 0;
+      const simW = data.simulasi ? Number(data.simulasi.wajaran40) : 0;
       const total100 = (amaliW + simW).toFixed(1);
 
       document.getElementById('rptJumlah100').innerText = `${total100}%`;
